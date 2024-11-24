@@ -3,55 +3,25 @@
 
 package types
 
-type CreateRequest struct {
-	Uid    int64 `json:"uid"`
-	Pid    int64 `json:"pid"`
-	Amount int64 `json:"amount"`
-	Status int64 `json:"status"`
+type NotifyRequest struct {
+	Txn []Transaction `json:"txn"`
 }
 
-type CreateResponse struct {
-	Id int64 `json:"id"`
+type NotifyResponse struct {
+	Success bool `json:"success"`
 }
 
-type DetailRequest struct {
-	Id int64 `json:"id"`
-}
-
-type DetailResponse struct {
-	Id     int64 `json:"id"`
-	Uid    int64 `json:"uid"`
-	Pid    int64 `json:"pid"`
-	Amount int64 `json:"amount"`
-	Status int64 `json:"status"`
-}
-
-type ListRequest struct {
-	Uid int64 `json:"uid"`
-}
-
-type ListResponse struct {
-	Id     int64 `json:"id"`
-	Uid    int64 `json:"uid"`
-	Pid    int64 `json:"pid"`
-	Amount int64 `json:"amount"`
-	Status int64 `json:"status"`
-}
-
-type RemoveRequest struct {
-	Id int64 `json:"id"`
-}
-
-type RemoveResponse struct {
-}
-
-type UpdateRequest struct {
-	Id     int64 `json:"id"`
-	Uid    int64 `json:"uid,optional"`
-	Pid    int64 `json:"pid,optional"`
-	Amount int64 `json:"amount,optional"`
-	Status int64 `json:"status,optional"`
-}
-
-type UpdateResponse struct {
+type Transaction struct {
+	BlockHash    string `json:"block_hash"`
+	BlockNumber  int64  `json:"block_number"`
+	Hash         string `json:"hash"`
+	FromAddress  string `json:"from_address"`
+	ToAddress    string `json:"to_address"`
+	Value        string `json:"value"`
+	Fee          string `json:"fee"`
+	TxType       string `json:"tx_type"`
+	Confirms     int64  `json:"confirms"`
+	TokenAddress string `json:"token_address,optional"`
+	TokenId      string `json:"token_id,optional"`
+	TokenMeta    string `json:"token_meta,optional"`
 }

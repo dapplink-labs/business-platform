@@ -16,28 +16,8 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 		[]rest.Route{
 			{
 				Method:  http.MethodPost,
-				Path:    "/api/order/create",
-				Handler: CreateHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodPost,
-				Path:    "/api/order/detail",
-				Handler: DetailHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodPost,
-				Path:    "/api/order/list",
-				Handler: ListHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodPost,
-				Path:    "/api/order/remove",
-				Handler: RemoveHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodPost,
-				Path:    "/api/order/update",
-				Handler: UpdateHandler(serverCtx),
+				Path:    "/dapplink/notify",
+				Handler: TxNotifyHandler(serverCtx),
 			},
 		},
 	)
