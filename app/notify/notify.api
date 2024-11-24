@@ -1,0 +1,28 @@
+type (
+	Transaction {
+		BlockHash    string `json:"block_hash"`
+		BlockNumber  int64  `json:"block_number"`
+		Hash         string `json:"hash"`
+		FromAddress  string `json:"from_address"`
+		ToAddress    string `json:"to_address"`
+		Value        string `json:"value"`
+		Fee          string `json:"fee"`
+		TxType       string `json:"tx_type"`
+		Confirms     int64  `json:"confirms"`
+		TokenAddress string `json:"token_address,optional"`
+		TokenId      string `json:"token_id,optional"`
+		TokenMeta    string `json:"token_meta,optional"`
+	}
+	NotifyRequest {
+		Txn []Transaction `json:"txn"`
+	}
+	NotifyResponse {
+		Success bool `json:"success"`
+	}
+)
+
+service Notify {
+	@handler TxNotify
+	post /dapplink/notify (NotifyRequest) returns (NotifyResponse)
+}
+
