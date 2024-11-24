@@ -4,7 +4,7 @@
 // - protoc             v4.25.3
 // source: protobuf/dapplink-wallet.proto
 
-package dal_wallet_go
+package proto
 
 import (
 	context "context"
