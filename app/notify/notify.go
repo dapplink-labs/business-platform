@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/zeromicro/go-zero/core/logx"
 
 	"business-platform/app/notify/internal/config"
 	"business-platform/app/notify/internal/handler"
@@ -12,7 +13,7 @@ import (
 	"github.com/zeromicro/go-zero/rest"
 )
 
-var configFile = flag.String("f", "etc/notify.yaml", "the config file")
+var configFile = flag.String("f", "app/notify/etc/notify.yaml", "the config file")
 
 func main() {
 	flag.Parse()
@@ -20,7 +21,23 @@ func main() {
 	var c config.Config
 	conf.MustLoad(*configFile, &c)
 
-	server := rest.MustNewServer(c.RestConf)
+	logx.DisableStat()
+	err := logx.SetUp(logx.LogConf{
+		ServiceName: c.Name,
+		Mode:        "console",
+		Encoding:    "plain",
+		TimeFormat:  "2006-01-02 15:04:05.000",
+		Level:       "info",
+		Path:        "logs",
+	})
+	if err != nil {
+		return
+	}
+
+	server := rest.MustNewServer(c.RestConf,
+		// enabled cors
+		rest.WithCors(),
+	)
 	defer server.Stop()
 
 	ctx := svc.NewServiceContext(c)
