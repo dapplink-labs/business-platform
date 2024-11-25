@@ -1,6 +1,7 @@
 package main
 
 import (
+	"business-platform/app/common/web/respmiddleware"
 	"flag"
 	"fmt"
 
@@ -22,6 +23,8 @@ func main() {
 
 	server := rest.MustNewServer(c.RestConf)
 	defer server.Stop()
+
+	server.Use(respmiddleware.NewResponseMiddleware().Handle)
 
 	ctx := svc.NewServiceContext(c)
 	handler.RegisterHandlers(server, ctx)

@@ -3,55 +3,66 @@
 
 package types
 
-type CreateRequest struct {
-	Uid    int64 `json:"uid"`
-	Pid    int64 `json:"pid"`
-	Amount int64 `json:"amount"`
-	Status int64 `json:"status"`
+type WithdrawListRequest struct {
+	Uid      int64 `form:"uid"`                  // 用户ID
+	Status   int   `form:"status,optional"`      // 状态筛选
+	Page     int64 `form:"page,default=1"`       // 页码
+	PageSize int64 `form:"page_size,default=20"` // 每页数量
 }
 
-type CreateResponse struct {
-	Id int64 `json:"id"`
+type WithdrawListResponse struct {
+	Page     int64               `form:"page,default=1"`       // 页码
+	PageSize int64               `form:"page_size,default=20"` // 每页数量
+	Total    int64               `json:"total"`                // 总数
+	List     []WithdrawOrderInfo `json:"list"`                 // 订单列表
 }
 
-type DetailRequest struct {
-	Id int64 `json:"id"`
+type WithdrawOrderInfo struct {
+	Id          int64  `json:"id"`
+	Uid         int64  `json:"uid"`
+	Amount      string `json:"amount"`
+	ToAddress   string `json:"to_address"`
+	ChainId     int64  `json:"chain_id"`
+	TokenSymbol string `json:"token_symbol"`
+	TokenAddr   string `json:"token_addr"`
+	TxHash      string `json:"tx_hash"`
+	Status      int    `json:"status"`
+	Memo        string `json:"memo"`
+	CreatedAt   string `json:"created_at"`
+	UpdatedAt   string `json:"updated_at"`
 }
 
-type DetailResponse struct {
-	Id     int64 `json:"id"`
-	Uid    int64 `json:"uid"`
-	Pid    int64 `json:"pid"`
-	Amount int64 `json:"amount"`
-	Status int64 `json:"status"`
+type WithdrawOrderInfoResponse struct {
+	Id          int64  `json:"id"`
+	Uid         int64  `json:"uid"`
+	Amount      string `json:"amount"`
+	ToAddress   string `json:"to_address"`
+	ChainId     int64  `json:"chain_id"`
+	TokenSymbol string `json:"token_symbol"`
+	TokenAddr   string `json:"token_addr"`
+	TxHash      string `json:"tx_hash"`
+	Status      int    `json:"status"`
+	Memo        string `json:"memo"`
+	CreatedAt   string `json:"created_at"`
+	UpdatedAt   string `json:"updated_at"`
 }
 
-type ListRequest struct {
-	Uid int64 `json:"uid"`
+type WithdrawOrderRequest struct {
+	OrderId int64 `form:"order_id"` // 订单ID
+	Uid     int64 `form:"uid"`      // 用户ID
 }
 
-type ListResponse struct {
-	Id     int64 `json:"id"`
-	Uid    int64 `json:"uid"`
-	Pid    int64 `json:"pid"`
-	Amount int64 `json:"amount"`
-	Status int64 `json:"status"`
+type WithdrawRequest struct {
+	Amount      string `json:"amount"`        // 提现金额，使用string避免精度问题
+	ToAddress   string `json:"to_address"`    // 提现目标地址
+	ChainId     int64  `json:"chain_id"`      // 链ID，例如1为以太坊主网
+	TokenSymbol string `json:"token_symbol"`  // 代币符号，例如"ETH"、"USDT"
+	TokenAddr   string `json:"token_addr"`    // 代币合约地址（如果是主币可以为空）
+	Uid         int64  `json:"uid"`           // 用户ID
+	Memo        string `json:"memo,optional"` // 备注，可选字段
 }
 
-type RemoveRequest struct {
-	Id int64 `json:"id"`
-}
-
-type RemoveResponse struct {
-}
-
-type UpdateRequest struct {
-	Id     int64 `json:"id"`
-	Uid    int64 `json:"uid,optional"`
-	Pid    int64 `json:"pid,optional"`
-	Amount int64 `json:"amount,optional"`
-	Status int64 `json:"status,optional"`
-}
-
-type UpdateResponse struct {
+type WithdrawResponse struct {
+	OrderId int64  `json:"order_id"` // 订单ID
+	TxHash  string `json:"tx_hash"`  // 交易哈希（如果是异步处理可以为空）
 }

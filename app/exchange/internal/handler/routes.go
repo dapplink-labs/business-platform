@@ -6,6 +6,7 @@ package handler
 import (
 	"net/http"
 
+	withdraw "business-platform/app/exchange/internal/handler/withdraw"
 	"business-platform/app/exchange/internal/svc"
 
 	"github.com/zeromicro/go-zero/rest"
@@ -15,30 +16,24 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 	server.AddRoutes(
 		[]rest.Route{
 			{
+				// 创建提现订单
 				Method:  http.MethodPost,
-				Path:    "/api/order/create",
-				Handler: CreateHandler(serverCtx),
+				Path:    "/withdraw/create",
+				Handler: withdraw.WithdrawHandler(serverCtx),
 			},
 			{
-				Method:  http.MethodPost,
-				Path:    "/api/order/detail",
-				Handler: DetailHandler(serverCtx),
+				// 查询提现订单列表
+				Method:  http.MethodGet,
+				Path:    "/withdraw/list",
+				Handler: withdraw.ListWithdrawOrdersHandler(serverCtx),
 			},
 			{
-				Method:  http.MethodPost,
-				Path:    "/api/order/list",
-				Handler: ListHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodPost,
-				Path:    "/api/order/remove",
-				Handler: RemoveHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodPost,
-				Path:    "/api/order/update",
-				Handler: UpdateHandler(serverCtx),
+				// 查询提现订单详情
+				Method:  http.MethodGet,
+				Path:    "/withdraw/order",
+				Handler: withdraw.GetWithdrawOrderHandler(serverCtx),
 			},
 		},
+		rest.WithPrefix("/api/v1"),
 	)
 }

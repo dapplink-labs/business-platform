@@ -1,4 +1,4 @@
-package logic
+package withdraw
 
 import (
 	"context"
@@ -9,21 +9,22 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type CreateLogic struct {
+type GetWithdrawOrderLogic struct {
 	logx.Logger
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 }
 
-func NewCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CreateLogic {
-	return &CreateLogic{
+// 查询提现订单详情
+func NewGetWithdrawOrderLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetWithdrawOrderLogic {
+	return &GetWithdrawOrderLogic{
 		Logger: logx.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
 }
 
-func (l *CreateLogic) Create(req *types.CreateRequest) (resp *types.CreateResponse, err error) {
+func (l *GetWithdrawOrderLogic) GetWithdrawOrder(req *types.WithdrawOrderRequest) (resp *types.WithdrawOrderInfoResponse, err error) {
 	// todo: add your logic here and delete this line
 
 	return
