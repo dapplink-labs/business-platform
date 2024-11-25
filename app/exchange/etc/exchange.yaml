@@ -1,3 +1,6 @@
 Name: Exchange
 Host: 0.0.0.0
 Port: 8888
+
+MultichainRpcConf:
+  Endpoint: 127.0.0.1:8189

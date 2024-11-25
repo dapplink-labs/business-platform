@@ -1,13 +1,14 @@
 package test
 
 import (
-	"business-platform/app/exchange/internal/types"
 	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
 	"testing"
+
+	"business-platform/app/exchange/internal/types"
 )
 
 func TestWithdraw(t *testing.T) {
