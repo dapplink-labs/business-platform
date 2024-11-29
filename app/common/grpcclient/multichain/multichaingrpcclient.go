@@ -20,6 +20,7 @@ type GrpcClient interface {
 	ExportAddressesByPublicKeys(ctx context.Context, in *proto.ExportAddressesRequest) (*proto.ExportAddressesResponse, error)
 	CreateUnSignTransaction(ctx context.Context, in *proto.UnSignWithdrawTransactionRequest) (*proto.UnSignWithdrawTransactionResponse, error)
 	BuildSignedTransaction(ctx context.Context, in *proto.SignedWithdrawTransactionRequest) (*proto.SignedWithdrawTransactionResponse, error)
+	// SetTokenAddress add token
 	SetTokenAddress(ctx context.Context, in *proto.SetTokenAddressRequest) (*proto.SetTokenAddressResponse, error)
 	Close() error
 }

@@ -3,4 +3,7 @@ Host: 0.0.0.0
 Port: 8888
 
 MultichainRpcConf:
-  Endpoint: 127.0.0.1:8189
+  Endpoint: "127.0.0.1:8189"
+
+NotifyRpcConf:
+  Endpoint: "127.0.0.1:8001/dapplink/notify"

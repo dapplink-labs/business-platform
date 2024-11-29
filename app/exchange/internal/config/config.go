@@ -7,4 +7,7 @@ type Config struct {
 	MultichainRpcConf struct {
 		Endpoint string
 	}
+	NotifyRpcConf struct {
+		Endpoint string
+	}
 }
