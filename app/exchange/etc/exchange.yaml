@@ -7,3 +7,17 @@ MultichainRpcConf:
 
 NotifyRpcConf:
   Endpoint: "127.0.0.1:8001/dapplink/notify"
+
+DbConf:
+  Master:
+    DbHost: "127.0.0.1"
+    DbPort: "5432"
+    DbName: "postgres"
+    DbUsername: "multichain"
+    DbPassword: "123456"
+  Slave:
+    DbHost: "127.0.0.1"
+    DbPort: "5432"
+    DbName: "postgres"
+    DbUsername: "multichain"
+    DbPassword: "123456"

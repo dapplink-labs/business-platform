@@ -10,4 +10,16 @@ type Config struct {
 	NotifyRpcConf struct {
 		Endpoint string
 	}
+	DbConf struct {
+		Master DbConfig
+		Slave  DbConfig
+	}
+}
+
+type DbConfig struct {
+	DbHost     string
+	DbPort     string
+	DbName     string
+	DbUsername string
+	DbPassword string
 }

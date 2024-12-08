@@ -12,7 +12,7 @@ import (
 
 const (
 	multichainUrl    = "127.0.0.1:8987"
-	notifyUrl        = "127.0.0.1:8001/dapplink/notify"
+	notifyUrl        = "http://127.0.0.1:8001"
 	CurrentRequestId = "1"
 	CurrentChainId   = "17000"
 	CurrentChain     = "ethereum"
@@ -77,8 +77,16 @@ func TestExportAddressesByPublicKeys(t *testing.T) {
 		RequestId: CurrentRequestId,
 		PublicKeys: []*proto.PublicKey{
 			{
-				Type:      1,
-				PublicKey: "048318535b54105d4a7aae60c08fc45f9687181b4fdfc625bd1a753fa7397fed753547f11ca8696646f2f3acb08e31016afac23e630c5d11f59f61fef57b0d2aa5",
+				Type:      "eoa",
+				PublicKey: "0422d39a1208b314bbbae7545c0b415167386d448ba9777b526e56d458db2f9f70d72f89373b7f53dfc9f0ff6aa55ae736fe2160d7ddd8be470250dd23fae9b0bc",
+			},
+			{
+				Type:      "hot",
+				PublicKey: "047b40b2707107640641c983919bfff36946849df442564a9bccc577680898c7449546e54eb4a2f63bfe8f061c9d7b7f6669a3154479746cc8e0d7c6ca2d490e6a",
+			},
+			{
+				Type:      "cold",
+				PublicKey: "04a84731792f6cdfb67d1c591d090844af1ecf4bb73193c7e389fedbdfc088564b3a1f9372781a0d92feb4251b3059f050873ada6ac2cb9b5b40f709900ce2a65d",
 			},
 		},
 	}
@@ -116,24 +124,23 @@ func Test_GrpcClient_CreateUnSignTransaction(t *testing.T) {
 	ctx := context.Background()
 
 	// 准备请求参数
-	req := &proto.UnSignWithdrawTransactionRequest{
-		RequestId: CurrentRequestId,
-		ChainId:   CurrentChainId,
-		Chain:     CurrentChain,
-		From:      "0xD79053a14BC465d9C1434d4A4fAbdeA7b6a2A94b",
-		To:        "0xDf894d39f6b33763bf55582Bb7A8b5515bccD982",
-		// 1 eth
-		//Value: "1000000000000000000",
-		// 0.01 eth
-		Value:           "10000000000000000",
+	request := &proto.UnSignWithdrawTransactionRequest{
+		ConsumerToken: "test_token",
+		RequestId:     CurrentRequestId,
+		ChainId:       CurrentChainId, // 主网
+		Chain:         CurrentChain,
+		From:          "0xD79053a14BC465d9C1434d4A4fAbdeA7b6a2A94b",
+		To:            "0xDf894d39f6b33763bf55582Bb7A8b5515bccD982",
+		//Value:         "1000000000000000000", // 1 ETH
+		Value:           "10000000000000000", // 0.01 ETH
 		ContractAddress: "0x00",
 		TokenId:         "",
 		TokenMeta:       "",
-		TxType:          "withdraw",
+		TxType:          "collection",
 	}
 
 	// 调用方法
-	resp, err := client.CreateUnSignTransaction(ctx, req)
+	resp, err := client.CreateUnSignTransaction(ctx, request)
 	if err != nil {
 		t.Fatalf("CreateUnSignTransaction failed: %v", err)
 	}

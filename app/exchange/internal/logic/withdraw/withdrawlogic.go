@@ -38,9 +38,9 @@ func (l *WithdrawLogic) Withdraw(req *types.WithdrawRequest) (resp *types.Withdr
 	//}
 
 	// 使用 Multichain 客户端
-	//txResp, err := l.svcCtx.MultichainClient.CreateUnSignTransaction(l.ctx, &proto.UnSignWithdrawTransactionRequest{
+	// txResp, err := l.svcCtx.MultichainClient.CreateUnSignTransaction(l.ctx, &proto.UnSignWithdrawTransactionRequest{
 	// ...
-	//})
+	// })
 
 	resp = &types.WithdrawResponse{
 		OrderId: 123456789,
