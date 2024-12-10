@@ -4,15 +4,11 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"strings"
 	"time"
 
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/backoff"
-	"google.golang.org/grpc/connectivity"
-	"google.golang.org/grpc/credentials/insecure"
-	"google.golang.org/grpc/keepalive"
 
+	"business-platform/app/common/grpcclient"
 	"business-platform/app/common/grpcclient/multichain/proto"
 )
 
@@ -32,55 +28,10 @@ type grpcClient struct {
 	endpoint string
 }
 
-const (
-	// ConnectTimeout is the maximum duration allowed for establishing a new gRPC connection.
-	ConnectTimeout = 5 * time.Second
-	// keepaliveTime is the interval at which the client sends "ping" messages to the server
-	// to ensure the connection remains active, even when there are no active streams.
-	keepaliveTime = 30 * time.Second
-	// keepaliveTimeout is the maximum time the client waits for a "ping" response from the server.
-	// If the server does not respond within this time, the connection is considered broken.
-	keepaliveTimeout = 10 * time.Second
-)
-
 func NewGrpcClient(endpoint string) (GrpcClient, error) {
-	endpoint = strings.TrimPrefix(endpoint, "http://")
-	endpoint = strings.TrimPrefix(endpoint, "https://")
-
-	ctx, cancel := context.WithTimeout(context.Background(), ConnectTimeout)
-	defer cancel()
-
-	opts := []grpc.DialOption{
-		grpc.WithTransportCredentials(insecure.NewCredentials()),
-		grpc.WithConnectParams(grpc.ConnectParams{
-			Backoff:           backoff.DefaultConfig,
-			MinConnectTimeout: ConnectTimeout,
-		}),
-		grpc.WithKeepaliveParams(keepalive.ClientParameters{
-			Time:                keepaliveTime,
-			Timeout:             keepaliveTimeout,
-			PermitWithoutStream: true,
-		}),
-	}
-
-	target := fmt.Sprintf("dns:///%s", endpoint)
-	conn, err := grpc.NewClient(target, opts...)
+	conn, err := grpcclient.CreateGrpcConnection(endpoint)
 	if err != nil {
-		return nil, fmt.Errorf("failed to create gRPC client: %w", err)
-	}
-
-	conn.Connect()
-
-	state := conn.GetState()
-	for state != connectivity.Ready {
-		if !conn.WaitForStateChange(ctx, state) {
-			err := conn.Close()
-			if err != nil {
-				return nil, fmt.Errorf("grpc connection conn.Close: %w", err)
-			}
-			return nil, fmt.Errorf("grpc connection timeout")
-		}
-		state = conn.GetState()
+		return nil, err
 	}
 
 	client := proto.NewBusinessMiddleWireServicesClient(conn)
@@ -93,6 +44,9 @@ func NewGrpcClient(endpoint string) (GrpcClient, error) {
 }
 
 func (c *grpcClient) BusinessRegister(ctx context.Context, businessId, notifyUrl string) error {
+	ctx, cancelFunc := WithTimeout(ctx, grpcclient.OnceRequestTimeout)
+	defer cancelFunc()
+
 	// Check if the businessId is empty
 	if businessId == "" {
 		return fmt.Errorf("businessId cannot be empty")
@@ -102,9 +56,6 @@ func (c *grpcClient) BusinessRegister(ctx context.Context, businessId, notifyUrl
 	if notifyUrl == "" {
 		return fmt.Errorf("notifyUrl cannot be empty")
 	}
-
-	ctx, cancel := context.WithTimeout(ctx, ConnectTimeout)
-	defer cancel()
 
 	req := &proto.BusinessRegisterRequest{
 		RequestId: businessId,
@@ -121,6 +72,9 @@ func (c *grpcClient) BusinessRegister(ctx context.Context, businessId, notifyUrl
 }
 
 func (c *grpcClient) ExportAddressesByPublicKeys(ctx context.Context, businessId string, publicKeyList []*proto.PublicKey) ([]*proto.Address, error) {
+	ctx, cancelFunc := WithTimeout(ctx, grpcclient.OnceRequestTimeout)
+	defer cancelFunc()
+
 	// Validate input parameters
 	if businessId == "" {
 		return nil, fmt.Errorf("businessId cannot be empty")
@@ -128,9 +82,6 @@ func (c *grpcClient) ExportAddressesByPublicKeys(ctx context.Context, businessId
 	if len(publicKeyList) == 0 {
 		return nil, fmt.Errorf("publicKeyList cannot be empty")
 	}
-	// Create a new context with a timeout
-	ctx, cancel := context.WithTimeout(ctx, ConnectTimeout)
-	defer cancel()
 
 	// Construct the request
 	req := &proto.ExportAddressesRequest{
@@ -153,6 +104,9 @@ func (c *grpcClient) ExportAddressesByPublicKeys(ctx context.Context, businessId
 }
 
 func (c *grpcClient) CreateUnSignTransaction(ctx context.Context, businessId string, in *CreateUnSignTransactionRequest) (txId string, UnSignTx string, err error) {
+	ctx, cancelFunc := WithTimeout(ctx, grpcclient.OnceRequestTimeout)
+	defer cancelFunc()
+
 	// Validate input parameters
 	if businessId == "" {
 		return "", "", errors.New("businessId cannot be empty")
@@ -160,9 +114,6 @@ func (c *grpcClient) CreateUnSignTransaction(ctx context.Context, businessId str
 	if in == nil {
 		return "", "", errors.New("request cannot be nil")
 	}
-	// Create a new context with a timeout
-	ctx, cancel := context.WithTimeout(ctx, ConnectTimeout)
-	defer cancel()
 
 	// Initialize the request
 	req := &proto.UnSignTransactionRequest{
@@ -203,6 +154,8 @@ func (c *grpcClient) CreateUnSignTransaction(ctx context.Context, businessId str
 }
 
 func (c *grpcClient) BuildSignedTransaction(ctx context.Context, businessId string, in *CreateSignedTransactionRequest) (SignedTx string, err error) {
+	ctx, cancelFunc := WithTimeout(ctx, grpcclient.OnceRequestTimeout)
+	defer cancelFunc()
 	// Validate input parameters
 	if in == nil {
 		return "", errors.New("request cannot be nil")
@@ -235,6 +188,9 @@ func (c *grpcClient) BuildSignedTransaction(ctx context.Context, businessId stri
 }
 
 func (c *grpcClient) SetTokenAddress(ctx context.Context, businessId string, tokenList []*proto.Token) error {
+	ctx, cancelFunc := WithTimeout(ctx, grpcclient.OnceRequestTimeout)
+	defer cancelFunc()
+
 	// Validate input parameters
 	if businessId == "" {
 		return errors.New("businessId cannot be empty")

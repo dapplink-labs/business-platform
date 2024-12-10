@@ -2,22 +2,39 @@ Name: Exchange
 Host: 0.0.0.0
 Port: 8888
 
-MultichainRpcConf:
+Log:
+  ServiceName: exchange
+  # Mode: console or "file"
+  Mode: console
+  Encoding: plain
+  TimeFormat: 2006-01-02 15:04:05.000
+  # log level: debug, info, error, etc.
+  Level: info
+  Path: "./logs"
+  Compress: true
+  KeepDays: 7
+
+MultiChainRpcConf:
+  Endpoint: "127.0.0.1:8987"
+SignRpcConf:
+  Endpoint: "127.0.0.1:8983"
+WalletAccountRpcConf:
   Endpoint: "127.0.0.1:8189"
 
 NotifyRpcConf:
-  Endpoint: "127.0.0.1:8001/dapplink/notify"
+  Endpoint: "http://127.0.0.1:8001"
+  BusinessId: "1"
 
 DbConf:
   Master:
     DbHost: "127.0.0.1"
     DbPort: "5432"
-    DbName: "postgres"
-    DbUsername: "multichain"
+    DbName: "business_platform"
+    DbUsername: "postgres"
     DbPassword: "123456"
   Slave:
     DbHost: "127.0.0.1"
     DbPort: "5432"
-    DbName: "postgres"
-    DbUsername: "multichain"
+    DbName: "business_platform"
+    DbUsername: "postgres"
     DbPassword: "123456"

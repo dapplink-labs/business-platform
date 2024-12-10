@@ -1,18 +1,12 @@
 package account
 
 import (
+	"business-platform/app/common/grpcclient"
 	"context"
-	"fmt"
-	"strings"
 	"time"
 
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/backoff"
-	"google.golang.org/grpc/connectivity"
-	"google.golang.org/grpc/credentials/insecure"
-	"google.golang.org/grpc/keepalive"
-
 	"business-platform/app/common/grpcclient/account/proto"
+	"google.golang.org/grpc"
 )
 
 type GrpcClient interface {
@@ -43,50 +37,10 @@ type grpcClient struct {
 	endpoint string
 }
 
-const (
-	dialTimeout      = 5 * time.Second
-	keepaliveTime    = 30 * time.Second
-	keepaliveTimeout = 10 * time.Second
-)
-
 func NewGrpcClient(endpoint string) (GrpcClient, error) {
-	endpoint = strings.TrimPrefix(endpoint, "http://")
-	endpoint = strings.TrimPrefix(endpoint, "https://")
-
-	ctx, cancel := context.WithTimeout(context.Background(), dialTimeout)
-	defer cancel()
-
-	opts := []grpc.DialOption{
-		grpc.WithTransportCredentials(insecure.NewCredentials()),
-		grpc.WithConnectParams(grpc.ConnectParams{
-			Backoff:           backoff.DefaultConfig,
-			MinConnectTimeout: dialTimeout,
-		}),
-		grpc.WithKeepaliveParams(keepalive.ClientParameters{
-			Time:                keepaliveTime,
-			Timeout:             keepaliveTimeout,
-			PermitWithoutStream: true,
-		}),
-	}
-
-	target := fmt.Sprintf("dns:///%s", endpoint)
-	conn, err := grpc.NewClient(target, opts...)
+	conn, err := grpcclient.CreateGrpcConnection(endpoint)
 	if err != nil {
-		return nil, fmt.Errorf("failed to create gRPC client: %w", err)
-	}
-
-	conn.Connect()
-
-	state := conn.GetState()
-	for state != connectivity.Ready {
-		if !conn.WaitForStateChange(ctx, state) {
-			err := conn.Close()
-			if err != nil {
-				return nil, fmt.Errorf("grpc connection conn.Close: %w", err)
-			}
-			return nil, fmt.Errorf("grpc connection timeout")
-		}
-		state = conn.GetState()
+		return nil, err
 	}
 
 	client := proto.NewWalletAccountServiceClient(conn)

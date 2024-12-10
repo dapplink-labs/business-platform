@@ -1,10 +1,19 @@
 package config
 
-import "github.com/zeromicro/go-zero/rest"
+import (
+	"github.com/zeromicro/go-zero/rest"
+)
 
 type Config struct {
 	rest.RestConf
-	MultichainRpcConf struct {
+
+	MultiChainRpcConf struct {
+		Endpoint string
+	}
+	SignRpcConf struct {
+		Endpoint string
+	}
+	WalletAccountRpcConf struct {
 		Endpoint string
 	}
 	NotifyRpcConf struct {

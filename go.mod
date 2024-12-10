@@ -4,6 +4,7 @@ go 1.22.8
 
 require (
 	github.com/go-resty/resty/v2 v2.16.2
+	github.com/lib/pq v1.10.9
 	github.com/stretchr/testify v1.9.0
 	github.com/zeromicro/go-zero v1.7.3
 	google.golang.org/grpc v1.65.0
